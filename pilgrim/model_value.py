@@ -36,16 +36,16 @@ class ResidualBlock(nn.Module):
         else:
             raise ValueError(f"Unknown activation function: {name}")
 
-class Pilgrim(nn.Module):
+class PilgrimValue(nn.Module):
     def __init__(self, state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.1, activation_function="relu", use_batch_norm=True):
-        super(Pilgrim, self).__init__()
+        super(PilgrimValue, self).__init__()
         self.hd1 = hd1
         self.hd2 = hd2
         self.nrd = nrd
         self.use_batch_norm = use_batch_norm
 
         input_dim = state_size * 6
-        self.input_layer = nn.Linear(input_dim, hd1)
+        self.input_layer = nn.Linear(state_size, hd1)
         self.bn1 = nn.BatchNorm1d(hd1) if use_batch_norm else None
         self.activation = self._get_activation_function(activation_function)
         self.dropout = nn.Dropout(dropout_rate)
@@ -67,7 +67,7 @@ class Pilgrim(nn.Module):
         self.output_layer = nn.Linear(hidden_dim_for_output, output_dim)
 
     def forward(self, z):
-        x = F.one_hot(z.long(), num_classes=6).float().view(z.size(0), -1)
+        x = z.float()
         x = self.input_layer(x)
         if self.use_batch_norm:
             x = self.bn1(x)

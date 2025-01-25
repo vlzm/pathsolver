@@ -3,7 +3,7 @@ import time
 from collections import deque
 from tqdm import tqdm
 from .utils import state2hash
-from .model import batch_process
+from .model_value import batch_process
 
 
 class Searcher:

@@ -4,9 +4,9 @@ import time
 import pandas as pd
 import schedulefree
 import math
-from .model import Pilgrim
+from .model_value import PilgrimValue
 
-class Trainer:
+class TrainerValue:
     def __init__(self, 
                  net, num_epochs, device, 
                  batch_size=10000, lr=0.001, name="", K_min=1, K_max=55, 
@@ -29,8 +29,8 @@ class Trainer:
             raise ValueError(f'Wrong optimizer value ({optimizer}). It can be "Adam" or "AdamSF".')
         self.epoch = 0
         self.id = int(time.time())
-        self.log_dir = "logs"
-        self.weights_dir = "weights"
+        self.log_dir = "logs_value"
+        self.weights_dir = "weights_value"
         self.name = name
         self.K_min = K_min
         self.K_max = K_max

@@ -1,12 +1,65 @@
 import torch
 import json
+import os
 
-def load_cube_data(cube_size, cube_type, device):
-    """Load cube data based on cube size and type (qtm or all)."""
-    file_path = f"generators/{cube_type}_cube{cube_size}.json"
+def generate_permutation_data(permutation, permutation_size, permutation_type):
+    # Define elements as [0, 1, 2, 3, 4, 5]
+    if permutation == 'standard':
+        elements = list(range(permutation_size))
+        permutations = []
+        names = []
+
+        # Generate transpositions (2-cycles)
+        for i in range(len(elements)):
+            for j in range(i + 1, len(elements)):
+                if i == 0 and j == 1:
+                    # Transposition (i <-> j)
+                    transposition = elements[:]
+                    transposition[i], transposition[j] = transposition[j], transposition[i]
+                    permutations.append(transposition)
+                    names.append(f"t{i}{j}")  # Name for transposition
+
+                    # Inverse of transposition is itself
+                    permutations.append(transposition[:])
+                    names.append(f"t{i}{j}'")
+
+        # Generate a full cycle (0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 0)
+        full_cycle = elements[:]
+        full_cycle_rotated = full_cycle[-1:] + full_cycle[:-1]  # Rotate right by 1
+        permutations.append(full_cycle_rotated)
+        names.append("full_cycle")
+
+        # Generate inverse full cycle (5 -> 4 -> 3 -> 2 -> 1 -> 0 -> 5)
+        inverse_full_cycle = elements[:]
+        inverse_full_cycle = inverse_full_cycle[1:] + inverse_full_cycle[:1]  # Rotate left by 1
+        permutations.append(inverse_full_cycle)
+        names.append("full_cycle'")
+
+        # Combine data into a JSON-compatible structure
+        standard_data = {"actions": permutations, "names": names}
+
+        # Save to JSON
+        output_path = f"generators/{permutation_type}_{permutation}{permutation_size}.json"
+        with open(output_path, "w") as f:
+            json.dump(standard_data, f)
+
+        print(f"File saved to {output_path}")
+    else:
+        raise ValueError(f"Invalid permutation: {permutation}")
+
+    return standard_data
+
+def load_permutation_data(permutation, permutation_size, permutation_type, device):
+    """Load permutation data based on permutation size and type (qtm or all)."""
+    file_path = f"generators/{permutation_type}_{permutation}{permutation_size}.json"
     
-    with open(file_path, 'rb') as f:
-        data = json.load(f)
+    if not os.path.exists(file_path):
+        generate_permutation_data(permutation, permutation_size, permutation_type)
+        with open(file_path, 'rb') as f:
+            data = json.load(f)
+    else:
+        with open(file_path, 'rb') as f:
+            data = json.load(f)
     
     actions = data["actions"]
     action_names = data["names"]
