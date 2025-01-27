@@ -122,6 +122,7 @@ class TrainerValue:
             if (self.epoch & (self.epoch - 1)) == 0:
                 weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}.pth"
                 torch.save(self.net.state_dict(), weights_file)
+                print('weights_file:', weights_file)
 #                 torch.save(self.test_logs, f'outputs/{self.name}_{self.id}.pt')
 
                 # Print saving information with timestamp and train loss
@@ -132,6 +133,7 @@ class TrainerValue:
             if self.epoch in [10000, 50000]:
                 weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}.pth"
                 torch.save(self.net.state_dict(), weights_file)
+                print('weights_file:', weights_file)
 
                 # Print saving information with timestamp and train loss
                 timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
@@ -139,6 +141,7 @@ class TrainerValue:
         # Save final weights
         final_weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}final.pth"
         torch.save(self.net.state_dict(), final_weights_file)
+        print('final_weights_file:', final_weights_file)
 
         # Print final saving information
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())

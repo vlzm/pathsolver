@@ -11,11 +11,11 @@ class Searcher:
         self.model = model.to(device)
         self.all_moves = all_moves
         self.V0 = V0
-        self.batch_size = 2**14
+        self.batch_size = 2**17
         self.n_gens = all_moves.size(0)
         self.state_size = all_moves.size(1)
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.hash_vec = torch.randint(0, int(1e15), (self.state_size,), device=self.device)
+        self.hash_vec = torch.randint(0, int(1e16), (self.state_size,), device=self.device)
         self.verbose = verbose
     
     def get_unique_states(self, states, states_bad_hashed):
@@ -31,6 +31,7 @@ class Searcher:
     def get_unique_hashed_states_idx(self, hashed, states_bad_hashed):
         """Filter unique hashed states by removing duplicates"""
         idx1 = torch.arange(hashed.size(0), dtype=torch.int64, device=hashed.device)
+
         mask1  = ~torch.isin(hashed, states_bad_hashed)
         hashed = hashed[mask1]
         hashed_sorted, idx2 = torch.sort(hashed)
@@ -115,6 +116,7 @@ class Searcher:
             else:
                 pbar = range(num_steps)
             for j in pbar:
+
                 states, y_pred, moves, idx = self.do_greedy_step(states, states_bad_hashed, B)
                 if self.verbose:
                     pbar.set_description(
