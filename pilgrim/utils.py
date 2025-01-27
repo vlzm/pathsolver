@@ -19,14 +19,14 @@ def generate_permutation_data(permutation, permutation_size, permutation_type):
                     permutations.append(transposition)
                     names.append(f"t{i}{j}")  # Name for transposition
 
-                    # Inverse of transposition is itself
-                    permutations.append(transposition[:])
-                    names.append(f"t{i}{j}'")
+                    # # Inverse of transposition is itself
+                    # permutations.append(transposition[:])
+                    # names.append(f"t{i}{j}'")
         
         # Generate a full cycle (0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 0)
         full_cycle = elements[:]
         full_cycle_rotated = full_cycle[-1:] + full_cycle[:-1]  # Rotate right by 1
-        print(full_cycle_rotated)
+        # print(full_cycle_rotated)
         permutations.append(full_cycle_rotated)
         names.append("full_cycle")
 
@@ -34,7 +34,7 @@ def generate_permutation_data(permutation, permutation_size, permutation_type):
         inverse_full_cycle = elements[:]
         inverse_full_cycle = inverse_full_cycle[1:] + inverse_full_cycle[:1]  # Rotate left by 1
         permutations.append(inverse_full_cycle)
-        names.append("full_cycle'")
+        names.append("full_cycle_inv")
 
         # Combine data into a JSON-compatible structure
         standard_data = {"actions": permutations, "names": names}
@@ -78,11 +78,11 @@ def generate_permutation_data_test(permutation, permutation_size, permutation_ty
         permutations.append(full_cycle_rotated)
         names.append("full_cycle")
 
-        # # Generate inverse full cycle (5 -> 4 -> 3 -> 2 -> 1 -> 0 -> 5)
-        # inverse_full_cycle = elements[:]
-        # inverse_full_cycle = inverse_full_cycle[1:] + inverse_full_cycle[:1]  # Rotate left by 1
-        # permutations.append(inverse_full_cycle)
-        # names.append("full_cycle'")
+        # Generate inverse full cycle (5 -> 4 -> 3 -> 2 -> 1 -> 0 -> 5)
+        inverse_full_cycle = elements[:]
+        inverse_full_cycle = inverse_full_cycle[1:] + inverse_full_cycle[:1]  # Rotate left by 1
+        permutations.append(inverse_full_cycle)
+        names.append("full_cycle_inv'")
 
         # Combine data into a JSON-compatible structure
         standard_data = {"actions": permutations, "names": names}
@@ -92,7 +92,7 @@ def generate_permutation_data_test(permutation, permutation_size, permutation_ty
         with open(output_path, "w") as f:
             json.dump(standard_data, f)
 
-        # print(f"File saved to {output_path}")
+        print(f"File saved to {output_path}")
     else:
         raise ValueError(f"Invalid permutation: {permutation}")
 
@@ -124,15 +124,24 @@ def load_permutation_data_test(permutation, permutation_size, permutation_type, 
     
     return torch.tensor(actions, dtype=torch.int64, device=device), action_names
 
+# def generate_inverse_moves(moves):
+#     """Generate the inverse moves for a given list of moves."""
+#     inverse_moves = [0] * len(moves)
+#     for i, move in enumerate(moves):
+#         if "'" in move:  # It's an a_j'
+#             inverse_moves[i] = moves.index(move.replace("'", ""))
+#         else:  # It's an a_j
+#             inverse_moves[i] = moves.index(move + "'")
+#     return inverse_moves
+
 def generate_inverse_moves(moves):
-    """Generate the inverse moves for a given list of moves."""
+    """Get the inverse moves for a given list of moves."""
     inverse_moves = [0] * len(moves)
     for i, move in enumerate(moves):
-        if "'" in move:  # It's an a_j'
-            inverse_moves[i] = moves.index(move.replace("'", ""))
-        else:  # It's an a_j
-            inverse_moves[i] = moves.index(move + "'")
+        if "inv" in move:
+            inverse_moves[i] = moves.index(move.replace("_inv", ""))
     return inverse_moves
+
 
 def state2hash(states, hash_vec, batch_size=2**14):
     """Convert states to hashes."""
