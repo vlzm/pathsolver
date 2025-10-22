@@ -3,41 +3,30 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ResidualBlock(nn.Module):
-    def __init__(self, hidden_dim, dropout_rate=0.1, activation_function="relu", use_batch_norm=True):
+    def __init__(self, hidden_dim, dropout_rate=0.1):
         super(ResidualBlock, self).__init__()
         self.fc1 = nn.Linear(hidden_dim, hidden_dim)
-        self.bn1 = nn.BatchNorm1d(hidden_dim) if use_batch_norm else None
-        self.activation = self._get_activation_function(activation_function)
+        self.bn1 = nn.BatchNorm1d(hidden_dim)
+        self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout_rate)
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.bn2 = nn.BatchNorm1d(hidden_dim) if use_batch_norm else None
-        self.use_batch_norm = use_batch_norm
+        self.bn2 = nn.BatchNorm1d(hidden_dim)
 
     def forward(self, x):
         residual = x
         out = self.fc1(x)
-        if self.use_batch_norm:
-            out = self.bn1(out)
-        out = self.activation(out)
+        out = self.bn1(out)
+        out = self.relu(out)
         out = self.dropout(out)
         out = self.fc2(out)
-        if self.use_batch_norm:
-            out = self.bn2(out)
-        out += residual
-        out = self.activation(out)
+        out = self.bn2(out)
+        out = out + residual
+        out = self.relu(out)
         return out
 
-    @staticmethod
-    def _get_activation_function(name):
-        if name == "relu":
-            return nn.ReLU()
-        elif name == "mish":
-            return nn.Mish()
-        else:
-            raise ValueError(f"Unknown activation function: {name}")
 
 class Pilgrim(nn.Module):
-    def __init__(self, state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.1, activation_function="relu", use_batch_norm=True, num_classes=6):
+    def __init__(self, state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.0, num_classes=6):
         super(Pilgrim, self).__init__()
         self.dtype = torch.float32
         self.state_size = state_size
@@ -45,19 +34,16 @@ class Pilgrim(nn.Module):
         self.hd1 = hd1
         self.hd2 = hd2
         self.nrd = nrd
-        self.use_batch_norm = use_batch_norm
         self.z_add = 0
-        
-#         self.bag = nn.EmbeddingBag(self.num_classes*self.state_size, hd1)
-        self.input_layer = nn.Linear(state_size * self.num_classes, hd1)
 
-        self.bn1 = nn.BatchNorm1d(hd1) if use_batch_norm else None
-        self.activation = self._get_activation_function(activation_function)
+        self.input_layer = nn.Linear(state_size * num_classes, hd1)
+        self.bn1 = nn.BatchNorm1d(hd1)
+        self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout_rate)
 
         if hd2 > 0:
             self.hidden_layer = nn.Linear(hd1, hd2)
-            self.bn2 = nn.BatchNorm1d(hd2) if use_batch_norm else None
+            self.bn2 = nn.BatchNorm1d(hd2)
             hidden_dim_for_output = hd2
         else:
             self.hidden_layer = None
@@ -65,48 +51,45 @@ class Pilgrim(nn.Module):
             hidden_dim_for_output = hd1
 
         if nrd > 0 and hd2 > 0:
-            self.residual_blocks = nn.ModuleList([ResidualBlock(hd2, dropout_rate, activation_function, use_batch_norm) for _ in range(nrd)])
+            self.residual_blocks = nn.ModuleList(
+                [ResidualBlock(hd2, dropout_rate) for _ in range(nrd)]
+            )
         else:
             self.residual_blocks = None
 
         self.output_layer = nn.Linear(hidden_dim_for_output, output_dim)
 
     def forward(self, z):
-        x = F.one_hot(z.long()+self.z_add, num_classes=self.num_classes).view(z.size(0), -1).to(self.dtype)
-#         x = self.bag(z.long()+torch.arange(self.state_size, device=z.device, dtype=torch.int64)[None] * self.num_classes)
-        x = self.input_layer(x)
+        # One-hot encode and flatten to dense
+        x = F.one_hot(z.long() + self.z_add, num_classes=self.num_classes).view(z.size(0), -1).to(self.dtype)
 
-        if self.use_batch_norm:
-            x = self.bn1(x)
-        x = self.activation(x)
+        # Input block
+        x = self.input_layer(x)
+        x = self.bn1(x)
+        x = self.relu(x)
         x = self.dropout(x)
 
-        if self.hidden_layer:
+        # Optional hidden block
+        if self.hidden_layer is not None:
             x = self.hidden_layer(x)
-            if self.bn2:
-                x = self.bn2(x)
-            x = self.activation(x)
+            x = self.bn2(x)
+            x = self.relu(x)
             x = self.dropout(x)
 
-        if self.residual_blocks:
+        # Optional residual stack
+        if self.residual_blocks is not None:
             for block in self.residual_blocks:
                 x = block(x)
 
+        # Output
         x = self.output_layer(x)
         return x.flatten()
 
-    @staticmethod
-    def _get_activation_function(name):
-        if name == "relu":
-            return nn.ReLU()
-        elif name == "mish":
-            return nn.Mish()
-        else:
-            raise ValueError(f"Unknown activation function: {name}")
 
 def count_parameters(model):
     """Count the trainable parameters in a model."""
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 
 def batch_process(model, data, device, batch_size):
     """
@@ -125,9 +108,9 @@ def batch_process(model, data, device, batch_size):
 
     # Process each batch
     for i in range(0, data.size(0), batch_size):
-        batch = data[i:i+batch_size].to(device)
+        batch = data[i:i + batch_size].to(device)
         with torch.no_grad():
             batch_output = model(batch).flatten()
-        outputs[i:i+batch_size] = batch_output
+        outputs[i:i + batch_size] = batch_output
 
     return outputs
