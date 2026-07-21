@@ -1,0 +1,25 @@
+baseURL = 'https://vlzm.github.io/pathsolver/'
+title = 'Pathsolver'
+theme = 'hugo-book'
+locale = 'en-us'
+
+# hugo-book builds the left-hand menu from the content/docs tree
+[params]
+  BookTheme = 'auto'          # light/dark/auto
+  BookToC = true              # right-hand table of contents
+  BookRepo = 'https://github.com/vlzm/pathsolver'
+  # "Edit this page" link. This theme version takes a template, not a path
+  # prefix; {{ .Path }} is the page file relative to docs/site/.
+  BookEditLink = '{{ .Site.Params.BookRepo }}/edit/main/docs/site/{{ .Path }}'
+  BookSearch = true
+  BookComments = false
+
+# KaTeX is loaded per-page via `math: true` (see
+# layouts/partials/docs/inject/head.html); Mermaid via `mermaid: true`.
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true             # needed for inline HTML (README tables, images)
+  [markup.tableOfContents]
+    startLevel = 1
+    endLevel = 3
