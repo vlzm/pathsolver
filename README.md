@@ -2,7 +2,6 @@
 
 [![NeurIPS 2025 Spotlight](https://img.shields.io/badge/NeurIPS%202025-Spotlight-0b5fff.svg)](#)
 [![arXiv:2502.13266](https://img.shields.io/badge/arXiv-2502.13266-b31b1b.svg)](https://www.arxiv.org/pdf/2502.13266)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-qdiag.xyz%2Fcube-0b5fff?logo=google-chrome&logoColor=white)](https://qdiag.xyz/cube/)
 
 **Lightweight, end-to-end PyTorch pipeline** — data generation → training → search — all in `torch`, optimized for massive GPU parallelism. This repository implements a novel ML approach for finding short paths on large **Cayley graphs** (e.g. across permutation puzzles such as the Rubik’s Cube) by training neural networks to estimate diffusion distances and using those predictions to guide an efficient beam search. This approach is **zero human knowledge** (no handcrafted heuristics or domain rules).
 
@@ -182,6 +181,38 @@ All logs are saved in `logs/`, with results printed at the end.
 | 054      | Cube 3x3x3 (DeepCubeA metric) | 26        |
 
 For reproducing results from Table 4, refer to provided `traintest-tab4-santa.sh` and `traintest-tab4-rnd.sh`, paper/solver-scrambles and paper/figure-scrambles contain generators and scrambles used in each specific experiment. The classical 15-puzzle (no wrap-around) is not a Cayley graph: node degrees vary with the blank position, hence the state graph is not vertex-transitive. We include it as a non-Cayley baseline at separate branch [puzzle-15](https://github.com/khoruzhii/cayleypy-cube/tree/puzzle-15).
+
+## Browser UI
+
+The `ui/` folder contains a browser demo that runs a trained model entirely
+client-side: `ui/web/cube/` is an interactive 3x3x3 solver where the beam search
+runs in a Web Worker on top of `onnxruntime-web`, using the exported network in
+`model2.onnx` and the move permutations in `moves.json`. Alongside it `ui/web/`
+holds several other standalone puzzle pages (sudoku, masyu, bmf, ...).
+
+There is **no build step** — the pages are plain HTML/CSS/JS and are deployed by
+copying `ui/web/` to a web server (see `ui/deploy/`). To run them locally you
+only need a static file server:
+
+```bash
+cd ui/web
+python3 -m http.server 8765
+```
+
+Then open <http://127.0.0.1:8765/cube/>.
+
+### Notes
+
+* Serve over HTTP — opening `index.html` as a `file://` URL fails, because the
+  Web Worker and the `fetch` of `moves.json` are blocked by the browser's
+  same-origin policy.
+* The pages load two dependencies from CDNs at runtime: `cubing.js` (the
+  `twisty-player` cube widget) and `onnxruntime-web` (plus its WASM binaries),
+  so the first load needs network access.
+* `ui/back/sudoku-back/` is an optional Node backend, needed only for Sudoku
+  multiplayer. Run it with `npm install && node server.js`, and set
+  `ALLOWED_ORIGINS` to the origin serving the pages (defaults to
+  `http://localhost:8080`).
 
 ## Citation
 

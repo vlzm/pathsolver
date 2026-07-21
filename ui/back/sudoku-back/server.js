@@ -6,11 +6,18 @@ const session = require('express-session');
 const { RoomManager } = require('./rooms');
 const { validateGameState, validateUpdate } = require('./gameState');
 
+// Comma-separated list of allowed browser origins, e.g.
+//   ALLOWED_ORIGINS=https://example.com,http://localhost:8080
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:8080')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ['https://qdiag.xyz', 'http://localhost:8080'],
+    origin: ALLOWED_ORIGINS,
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -22,7 +29,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'sudoku-info-secret-2024';
 
 // Middleware
 app.use(cors({
-  origin: ['https://qdiag.xyz', 'http://localhost:8080'],
+  origin: ALLOWED_ORIGINS,
   credentials: true
 }));
 app.use(express.json());

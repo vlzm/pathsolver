@@ -81,10 +81,11 @@ const initMultiplayer = () => {
 const connectToServer = () => {
   if (socket && socket.connected) return;
   
-  // Use production URL when not on localhost
-  const serverUrl = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
-    : 'https://qdiag.xyz';
+  // Local dev talks to the backend directly; in production it is same-origin
+  // (nginx proxies /socket.io/ to the backend -- see ui/deploy/).
+  const serverUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'
+    : window.location.origin;
   
   try {
     socket = io(serverUrl, {
