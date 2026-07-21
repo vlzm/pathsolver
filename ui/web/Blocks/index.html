@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blocks</title>
+  
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="Blocks">
+  <meta property="og:description" content="Falling tetraminos">
+  <meta property="og:image" content="https://qdiag.xyz/assets/blocks-preview.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://qdiag.xyz/blocks/">
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="https://qdiag.xyz/assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://qdiag.xyz/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://qdiag.xyz/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="https://qdiag.xyz/assets/icons/site.webmanifest">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- CSS files -->
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <header class="header">
+    <div class="leftControls">
+      <button id="menuBtn" class="hamburger">
+        <span></span>
+      </button>
+      
+      <div class="title-wrapper">
+        <button id="titleBtn" class="title-button">
+          Blocks
+          <svg class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        
+        <div id="gamesDropdown" class="games-dropdown">
+          <a href="/blocks/" class="game-item active">
+            <span class="game-name">Blocks</span>
+            <span class="game-desc">Falling tetraminos</span>
+          </a>
+          <a href="/other-game/" class="game-item">
+            <span class="game-name">Other Game</span>
+            <span class="game-desc">Coming soon</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="rightControls">
+      <a href="#" id="helpLink">How to Play</a>
+      <button id="newBtn" class="btn btn-primary">New Game</button>
+    </div>
+  </header>
+  
+  <div id="panel" class="settings-panel">
+    <div class="setting">
+      <label title="Enable or disable gameplay animations">Animations</label>
+      <label class="switch">
+        <input type="checkbox" id="animationsToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting">
+      <label title="Control pieces with mouse movement">Mouse Control</label>
+      <label class="switch">
+        <input type="checkbox" id="mouseControlToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="setting">
+      <label title="Show touch buttons on mobile">Touch Buttons</label>
+      <label class="switch">
+        <input type="checkbox" id="touchButtonsToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  
+  <main id="app" class="game-layout">
+    <!-- Score box -->
+    <div class="info-box score-box" id="scoreBox">
+      <div class="score-section">
+        <h3>Score</h3>
+        <div class="score" id="score">0</div>
+      </div>
+      <div class="stats">
+        <div>Level <span id="level">1</span></div>
+        <div>Lines <span id="lines">0</span></div>
+      </div>
+    </div>
+    
+    <!-- Hold box -->
+    <div class="info-box piece-box" id="holdBox">
+      <h3>Hold</h3>
+      <div class="hold-preview" id="holdPreview">
+        <div class="empty-hold"></div>
+      </div>
+    </div>
+    
+    <!-- Game board -->
+    <div class="game-container">
+      <div class="board-wrap">
+        <div id="board"></div>
+        <div class="paused-overlay" id="pausedOverlay">
+          <div class="paused-text">PAUSED</div>
+        </div>
+      </div>
+      <h2 id="gameOverText" class="game-over-text">Game Over</h2>
+    </div>
+    
+    <!-- Mobile pause button -->
+    <button id="mobilePauseBtn" class="mobile-pause-btn touch-control">
+      <svg class="pause-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="5" y="4" width="3" height="12" fill="currentColor"/>
+        <rect x="12" y="4" width="3" height="12" fill="currentColor"/>
+      </svg>
+      <svg class="play-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" style="display: none;">
+        <path d="M6 4 L16 10 L6 16 Z" fill="currentColor"/>
+      </svg>
+    </button>
+    
+    <!-- Next box -->
+    <div class="info-box piece-box" id="nextBox">
+      <h3>Next</h3>
+      <div class="next-queue" id="nextQueue"></div>
+    </div>
+    
+    <!-- Touch controls -->
+    <div id="touchControls" class="touch-controls">
+      <button id="touchLeft" class="touch-btn">
+        <svg width="28" height="28" viewBox="0 0 24 24">
+          <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </button>
+      <button id="touchRotate" class="touch-btn">
+        <svg width="20" height="20" viewBox="0 0 50 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 38c-5.1 0-9.7-3-11.8-7.6l1.8-.8c1.8 3.9 5.7 6.4 10 6.4 6.1 0 11-4.9 11-11s-4.9-11-11-11c-4.6 0-8.5 2.8-10.1 7.3l-1.9-.7c1.9-5.2 6.6-8.6 12-8.6 7.2 0 13 5.8 13 13s-5.8 13-13 13z"/>
+          <path d="M20 22h-8v-8h2v6h6z"/>
+        </svg>
+      </button>
+      <button id="touchRight" class="touch-btn">
+        <svg width="28" height="28" viewBox="0 0 24 24">
+          <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </button>
+    </div>
+    
+
+  </main>
+  
+  <footer class="footer">
+    <a href="https://t.me/qdiag" target="_blank">Telegram channel @qdiag</a>
+  </footer>
+  
+  <div class="help-modal" id="helpModal">
+    <div class="help-content">
+      <h2>How to Play Blocks</h2>
+      <p>Place falling blocks to create complete horizontal lines. When a line is completed, it disappears and you earn points!</p>
+      
+      <h3>Controls</h3>
+      <ul>
+        <li><strong>← →</strong> or <strong>A/D</strong> - Move left/right</li>
+        <li><strong>↓</strong> or <strong>S</strong> - Soft drop (faster fall)</li>
+        <li><strong>↑</strong> or <strong>W/X</strong> - Rotate clockwise</li>
+        <li><strong>Z</strong> or <strong>Ctrl</strong> - Rotate counter-clockwise</li>
+        <li><strong>Space</strong> - Hard drop (instant fall)</li>
+        <li><strong>C</strong> or <strong>Shift</strong> - Hold piece</li>
+        <li><strong>P</strong> or <strong>Esc</strong> - Pause game</li>
+      </ul>
+      
+      <h3>Touch Controls</h3>
+      <ul>
+        <li><strong>Tap board</strong> - Hard drop</li>
+        <li><strong>Swipe down</strong> - Soft drop</li>
+        <li><strong>Arrow buttons</strong> - Move left/right</li>
+        <li><strong>Rotate button</strong> - Rotate clockwise</li>
+        <li><strong>Double-tap rotate</strong> - Rotate counter-clockwise</li>
+        <li><strong>Tap Hold box</strong> - Hold piece</li>
+      </ul>
+      
+      <h3>Mouse Controls (when enabled)</h3>
+      <ul>
+        <li><strong>Move mouse</strong> - Position piece</li>
+        <li><strong>Left click</strong> - Hard drop</li>
+        <li><strong>Right click</strong> - Hold piece</li>
+        <li><strong>Middle click</strong> - Rotate clockwise</li>
+        <li><strong>Scroll wheel</strong> - Rotate piece</li>
+      </ul>
+      
+      <h3>Scoring System</h3>
+      <ul>
+        <li><strong>Single</strong> - 100 × level</li>
+        <li><strong>Double</strong> - 300 × level</li>
+        <li><strong>Triple</strong> - 500 × level</li>
+        <li><strong>Tetris</strong> - 800 × level</li>
+      </ul>
+      
+      <h3>Advanced Techniques</h3>
+      <ul>
+        <li><strong>T-Spin</strong> - Rotate a T-piece into a tight spot (400-1600 points)</li>
+        <li><strong>Mini T-Spin</strong> - Smaller T-Spin variant (100-400 points)</li>
+        <li><strong>Back-to-Back</strong> - Chain Tetrises or T-Spins for 1.5× points</li>
+        <li><strong>Combo</strong> - Clear lines consecutively for bonus points</li>
+        <li><strong>Perfect Clear</strong> - Clear the entire board for huge bonus!</li>
+      </ul>
+      
+      <h3>Tips</h3>
+      <ul>
+        <li>Use the <strong>ghost piece</strong> to see where your piece will land</li>
+        <li>Hold pieces strategically to set up big clears</li>
+        <li>T-Spins are worth more than regular line clears</li>
+        <li>Keep your stack low and flat for more options</li>
+        <li>Practice wall kicks to fit pieces in tight spots</li>
+      </ul>
+      
+      <button class="btn btn-primary" id="closeHelp">Got it!</button>
+    </div>
+  </div>
+  
+  <!-- JavaScript files -->
+  <script src="common.js"></script>
+  <script type="module" src="config.js"></script>
+  <script type="module" src="storage.js"></script>
+  <script type="module" src="engine.js"></script>
+  <script type="module" src="renderer.js"></script>
+  <script type="module" src="controller.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
