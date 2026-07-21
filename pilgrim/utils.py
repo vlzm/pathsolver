@@ -23,6 +23,25 @@ def generate_inverse_moves(moves):
             inverse_moves[i] = moves.index(move + "'")
     return inverse_moves
 
+def get_neighbors(states, all_moves, batch_size=2**14):
+    """Return neighboring states for each state in the batch.
+
+    :param states: Tensor [N, state_size]
+    :param all_moves: Tensor [n_gens, state_size] of permutations
+    :return: Tensor [N, n_gens, state_size]
+    """
+    n_gens, state_size = all_moves.size(0), all_moves.size(1)
+    neighbors = torch.empty(states.size(0), n_gens, state_size, device=states.device, dtype=states.dtype)
+
+    for i in range(0, states.size(0), batch_size):
+        batch_states = states[i:i + batch_size]
+        neighbors[i:i + batch_size] = torch.gather(
+            batch_states.unsqueeze(1).expand(batch_states.size(0), n_gens, state_size),
+            2,
+            all_moves.unsqueeze(0).expand(batch_states.size(0), n_gens, state_size)
+        )
+    return neighbors
+
 def state2hash(states, hash_vec, batch_size=2**14):
     """Convert states to hashes."""
     num_batches = (states.size(0) + batch_size - 1) // batch_size

@@ -4,6 +4,7 @@ import time
 import pandas as pd
 import math
 from .model import Pilgrim
+from .dqn import bellman_targets
 
 class Trainer:
     def __init__(self, 
@@ -79,7 +80,78 @@ class Trainer:
 
         return avg_loss / total_batches if total_batches > 0 else avg_loss
 
+    def _save_weights(self, train_loss, final=False):
+        """Save weights and report. Called on powers of two and at the very end."""
+        weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}.pth"
+        torch.save(self.net.state_dict(), weights_file)
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        prefix = "Finished. Saved final weights at" if final else "Saved weights at"
+        print(f"[{timestamp}] {prefix} epoch {self.epoch:5d}. Train Loss: {train_loss:.2f}")
+
+    def _finalize(self, train_loss):
+        """Save final weights unless the last epoch already landed on a power of two."""
+        if (self.epoch & (self.epoch - 1)) != 0:
+            self._save_weights(train_loss, final=True)
+        else:
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+            print(f"[{timestamp}] Finished at epoch {self.epoch}. Train Loss: {train_loss:.2f}.")
+
+    def run_dqn(self, num_epochs, walkers_num=None, flag_round=False):
+        """Modified DQN fine-tuning (arXiv:2502.18663).
+
+        Same random walk data as the supervised warm-up, but the targets are the
+        Bellman estimate clipped by the walk length instead of the walk length itself.
+        Continues the epoch counter, optimizer state and weight naming of run().
+        """
+        if num_epochs <= 0:
+            return
+
+        walkers_num = walkers_num or max(1, self.walkers_num // 10)
+        train_loss = float("nan")
+
+        for epoch in range(num_epochs):
+            self.epoch += 1
+
+            # Data generation
+            data_gen_start = time.time()
+            X, Y = self.generate_random_walks(k=walkers_num, K_min=self.K_min, K_max=self.K_max)
+            data_gen_time = time.time() - data_gen_start
+
+            # Bellman targets
+            bellman_start = time.time()
+            Y = bellman_targets(
+                self.net, X, Y, self.all_moves, self.V0,
+                batch_size=self.batch_size, flag_round=flag_round,
+            )
+            bellman_time = time.time() - bellman_start
+
+            # Shuffle and train
+            epoch_start = time.time()
+            perm = torch.randperm(X.size(0), device=self.device)
+            train_loss = self._train_epoch(X[perm], Y[perm])
+            epoch_time = time.time() - epoch_start
+
+            # Log training data
+            log_file = f"{self.log_dir}/dqn_{self.name}_{self.id}.csv"
+            log_data = pd.DataFrame([{
+                'epoch': self.epoch,
+                'train_loss': train_loss,
+                'vertices_seen': X.size(0),
+                'data_gen_time': data_gen_time,
+                'bellman_time': bellman_time,
+                'train_epoch_time': epoch_time
+            }])
+            log_data.to_csv(log_file, mode='a', header=not os.path.exists(log_file), index=False)
+
+            # Save weights on powers of two
+            if (self.epoch & (self.epoch - 1)) == 0:
+                self._save_weights(train_loss)
+
+        # Save final weights
+        self._finalize(train_loss)
+
     def run(self):
+        train_loss = float("nan")
         for epoch in range(self.num_epochs):
             self.epoch += 1
 
@@ -106,18 +178,8 @@ class Trainer:
 
             # Save weights on powers of two
             if (self.epoch & (self.epoch - 1)) == 0:
-                weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}.pth"
-                torch.save(self.net.state_dict(), weights_file)
-
-                # Print saving information with timestamp and train loss
-                timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-                print(f"[{timestamp}] Saved weights at epoch {self.epoch:5d}. Train Loss: {train_loss:.2f}")
+                self._save_weights(train_loss)
 
         # Save final weights
-        if (self.epoch & (self.epoch - 1)) != 0:
-            final_weights_file = f"{self.weights_dir}/{self.name}_{self.id}_e{self.epoch:05d}.pth"
-            torch.save(self.net.state_dict(), final_weights_file)
-
-        # Print final saving information
-        timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-        print(f"[{timestamp}] Finished. Saved final weights at epoch {self.epoch}. Train Loss: {train_loss:.2f}.")
+        if self.num_epochs > 0:
+            self._finalize(train_loss)

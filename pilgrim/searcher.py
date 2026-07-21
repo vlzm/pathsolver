@@ -2,7 +2,7 @@ import torch
 import time
 from collections import deque
 from tqdm import tqdm
-from .utils import state2hash
+from .utils import state2hash, get_neighbors
 from .model import batch_process
 
 
@@ -40,16 +40,8 @@ class Searcher:
     
     def get_neighbors(self, states):
         """Return neighboring states for each state in the batch."""
-        neighbors = torch.empty(states.size(0), self.n_gens, self.state_size, device=self.device, dtype=states.dtype)
-        for i in range(0, states.size(0), self.batch_size):
-            batch_states = states[i:i + self.batch_size]
-            neighbors[i:i + self.batch_size] = torch.gather(
-                batch_states.unsqueeze(1).expand(batch_states.size(0), self.n_gens, self.state_size), 
-                2, 
-                self.all_moves.unsqueeze(0).expand(batch_states.size(0), self.n_gens, self.state_size)
-            )
-        return neighbors
-    
+        return get_neighbors(states, self.all_moves, self.batch_size)
+
     def apply_move(self, states, moves):
         moved_states = torch.empty(states.size(0), self.state_size, device=self.device, dtype=states.dtype)
         for i in range(0, states.size(0), self.batch_size):

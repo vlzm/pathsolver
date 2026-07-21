@@ -25,6 +25,10 @@ def main():
     parser.add_argument("--K_min", type=int, default=1, help="Minimum K value for random walks")
     parser.add_argument("--K_max", type=int, default=30, help="Maximum K value for random walks")
     parser.add_argument("--weights", type=str, default="", help="Model weights name (without extension) in weights/ folder")
+    # Modified DQN fine-tuning (arXiv:2502.18663), runs after the supervised warm-up
+    parser.add_argument("--epochs_dqn", type=int, default=0, help="Number of Modified DQN epochs (0 disables it)")
+    parser.add_argument("--dqn_walkers", type=int, default=0, help="Walkers per DQN epoch (0 = 1/10 of the warm-up walkers)")
+    parser.add_argument("--dqn_round", action="store_true", help="Round DQN targets to integers")
     parser.add_argument("--device_id", type=int, default=0, help="CUDA device index (ignored if CPU)")
     # Cube parameters
     parser.add_argument("--group_id", type=int, required=True, help="Group ID")
@@ -146,8 +150,15 @@ def main():
     print(f"  id            {trainer.id}")
     print(f"  # parameters  {num_parameters:_}")
 
-    # Train
+    # Train: supervised warm-up, then optional Modified DQN fine-tuning
     trainer.run()
+    if args.epochs_dqn > 0:
+        print(f"Starting Modified DQN for {args.epochs_dqn} epochs.")
+        trainer.run_dqn(
+            num_epochs=args.epochs_dqn,
+            walkers_num=args.dqn_walkers or None,
+            flag_round=args.dqn_round,
+        )
 
 if __name__ == "__main__":
     main()
