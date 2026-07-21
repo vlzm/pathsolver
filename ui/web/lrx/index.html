@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LRX Permutation Solver</title>
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="LRX Permutation Solver" />
+  <meta property="og:description" content="Neural network solver for the LRX permutation puzzle" />
+  <meta property="og:type" content="website" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png" />
+  <link rel="manifest" href="/assets/icons/site.webmanifest" />
+
+  <link rel="stylesheet" href="/solver/nav.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="puzzle-nav">
+      <a href="/cube/">Cube</a>
+      <a href="/lrx/" aria-current="page">LRX</a>
+    </nav>
+
+    <h1>LRX Permutation Solver</h1>
+
+    <p class="subtitle">
+      Sort the row using only <strong>L</strong> (shift left), <strong>R</strong> (shift right)
+      and <strong>X</strong> (swap the first two).
+    </p>
+
+    <div class="size-row">
+      <label for="size">Length</label>
+      <select id="size">
+        <option value="10" selected>n = 10</option>
+        <option value="15">n = 15</option>
+      </select>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="status" id="status">Loading...</div>
+
+    <div class="controls">
+      <div class="button-row">
+        <button onclick="app.move('L')">L</button>
+        <button onclick="app.move('R')">R</button>
+        <button onclick="app.move('X')">X</button>
+      </div>
+
+      <div class="button-row action-buttons">
+        <button onclick="app.scramble()" class="primary">Scramble</button>
+        <button onclick="app.solve()" class="primary" id="solveBtn">Solve</button>
+        <button onclick="app.reset()">Reset</button>
+      </div>
+
+      <div class="button-row">
+        <button onclick="app.showLongest()" class="wide">Longest element</button>
+      </div>
+    </div>
+
+    <div class="solution" id="solution"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

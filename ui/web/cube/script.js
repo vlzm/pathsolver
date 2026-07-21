@@ -134,15 +134,15 @@ class CubeApp {
   async applySolution(solution) {
     this.solveBtn.textContent = 'Solve';
     
-    if (!solution || solution.length === 0) {
-      this.setStatus('Already solved!', 'solved');
+    if (!solution) {
+      this.setStatus('No solution found', 'error');
       this.isAnimating = false;
       this.setButtonsEnabled(true);
       return;
     }
-    
-    if (!solution) {
-      this.setStatus('No solution found', 'error');
+
+    if (solution.length === 0) {
+      this.setStatus('Already solved!', 'solved');
       this.isAnimating = false;
       this.setButtonsEnabled(true);
       return;

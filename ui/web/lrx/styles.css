@@ -1,0 +1,268 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 440px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.subtitle strong {
+  color: #111;
+}
+
+.size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+select {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
+}
+
+.tile {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f9fafb;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+/* Tile is already at its destination index. */
+.tile.placed {
+  background: #111;
+  border-color: #111;
+  color: white;
+}
+
+/* Value changed on the last move — brief highlight so the move is readable. */
+.tile.moved {
+  animation: pop 0.2s ease-out;
+}
+
+@keyframes pop {
+  0%   { transform: scale(0.82); }
+  100% { transform: scale(1); }
+}
+
+.status {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  min-height: 20px;
+  text-align: center;
+}
+
+.status.solving,
+.status.solved {
+  color: #111;
+  font-weight: 600;
+}
+
+.status.error {
+  color: #ef4444;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+button {
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #111;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 6px;
+  user-select: none;
+}
+
+button:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  background: #e5e7eb;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.action-buttons {
+  margin-top: 4px;
+}
+
+.action-buttons button {
+  width: 100px;
+  height: 40px;
+  font-size: 14px;
+}
+
+button.wide {
+  width: 206px;
+  height: 36px;
+  font-size: 13px;
+}
+
+button.primary {
+  background: #111;
+  color: white;
+  border: 1px solid #111;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #374151;
+  border-color: #374151;
+}
+
+button.primary:active:not(:disabled) {
+  background: #1f2937;
+}
+
+.solution {
+  width: 100%;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #111;
+  text-align: center;
+  min-height: 40px;
+  display: none;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+
+.solution.visible {
+  display: block;
+}
+
+.solution strong {
+  display: block;
+  margin-bottom: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #111;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .tile {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  button {
+    width: 40px;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .action-buttons button {
+    width: 90px;
+    height: 38px;
+  }
+
+  button.wide {
+    width: 186px;
+  }
+}
