@@ -62,10 +62,10 @@ python test.py --group_id 54 --target_id 0 --tests_num 3 --dataset deepcubea --n
 * `dataset` — selects the dataset to use:
   * `santa` — official Kaggle Santa 2023 dataset.
   * `rnd` — randomly generated dataset (100 scrambles) using 10,000(+1) random steps from the solved state.
-  * `deepcubea` (1000 DeepCubeA scrambles), `deepcubeadifficult` (69 DeepCubeA subset scrambles), `deepcubeahard` (16 DeepCubeA subset scrambles) — available only for group `054` (3x3x3, QTM metric), useful for benchmarking against DeepCubeA and EfficientCube.
+  * `deepcubea` (1000 DeepCubeA scrambles), `deepcubeadifficult` (16 DeepCubeA subset scrambles), `deepcubeahard` (69 DeepCubeA subset scrambles) — available only for group `054` (3x3x3, QTM metric), useful for benchmarking against DeepCubeA and EfficientCube.
 * `device_id` — specifies which GPU to use for testing (default is `0`). Useful when multiple GPUs are available.
 
-Optimal solution lengths for the scrambles in the `deepcubeahard`: `[20, 20, 20, 21, 20, 20, 20, 20, 19, 20, 20, 19, 21, 20, 20, 20]`.
+Optimal solution lengths for the scrambles in the `deepcubeadifficult`: `[20, 20, 20, 21, 20, 20, 20, 20, 19, 20, 20, 19, 21, 20, 20, 20]`.
 
 ## Output
 
@@ -104,6 +104,8 @@ python train.py --group_id 34 --target_id 0 --epochs 30 --epochs_dqn 200 --K_max
 * `--epochs_dqn` — number of Modified DQN epochs (`0` disables the phase).
 * `--dqn_walkers` — walkers per DQN epoch (`0` means 1/10 of the warm-up walkers).
 * `--dqn_round` — round DQN targets to integers (reported in the paper as giving no improvement; kept for reproduction).
+
+Run this **on top of** a diffusion-distance warm-up, not instead of one: the paper reports that DQN epochs reliably improve the warm-up model (shorter solutions, higher solve rate) but by a modest margin, while DQN from scratch performs poorly.
 
 ## Adding New Puzzle Groups
 
