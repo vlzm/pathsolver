@@ -1,4 +1,5 @@
 ---
+math: true
 title: "Reference"
 weight: 6
 bookCollapseSection: true

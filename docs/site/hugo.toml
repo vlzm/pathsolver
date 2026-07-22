@@ -20,6 +20,14 @@ locale = 'en-us'
 [markup]
   [markup.goldmark.renderer]
     unsafe = true             # needed for inline HTML (README tables, images)
+  # Hand \( ... \) etc. to client-side KaTeX untouched. Without this Goldmark
+  # strips the backslashes (\( → (, \{ → {), so auto-render never sees the
+  # delimiters and inline math shows up as raw text.
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+    [markup.goldmark.extensions.passthrough.delimiters]
+      block = [['\[', '\]'], ['$$', '$$']]
+      inline = [['\(', '\)']]
   [markup.tableOfContents]
     startLevel = 1
     endLevel = 3
