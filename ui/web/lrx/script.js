@@ -107,7 +107,7 @@ class LRXApp {
     return Array.from({ length: this.n }, (_, i) => i);
   }
 
-  // Moves act by gather, matching pilgrim/searcher.py and the ONNX input layout.
+  // Moves act by gather, matching pathsolver/searcher.py and the ONNX input layout.
   applyMove(state, move) {
     return move.map(i => state[i]);
   }

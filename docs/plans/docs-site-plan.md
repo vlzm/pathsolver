@@ -65,7 +65,7 @@ content/
     architecture/
       _index.md                  — обзор + mermaid-диаграмма пайплайна
       pipeline.md                — генерация данных → обучение → beam search → ONNX → UI
-      pilgrim.md                 — пакет pilgrim/: model.py, trainer.py, searcher.py,
+      pathsolver.md                 — пакет pathsolver/: model.py, trainer.py, searcher.py,
                                    dqn.py, utils.py (~1000 строк)
       data-contract.md           — конвенции данных: generators/pXXX.json,
                                    targets/*.pt, datasets/pXXX-tXXX-{rnd,santa}.pt
@@ -91,7 +91,7 @@ content/
 ```
 
 Опционально (позже): раздел **LRX + MDQN** по мере выполнения
-`docs/plans/lrx-mdqn-integration-plan.md` (этап 1 — MDQN в `pilgrim` — уже готов,
+`docs/plans/lrx-mdqn-integration-plan.md` (этап 1 — MDQN в `pathsolver` — уже готов,
 страницу про `Trainer.run_dqn` и CLI-флаги можно писать сразу).
 
 ## Этап 3 — наполнение (порядок по трудоёмкости)
@@ -103,7 +103,7 @@ content/
 | usage/*, reference/groups | README.md (переносится почти дословно, разбить на страницы) |
 | reference/cli | argparse в `train.py`, `test.py` |
 | reference/logs | `read-test-logs.py`, `read-test-logs-multiagent.py`, файлы в `logs/` |
-| architecture/* | код `pilgrim/`, `train.py`, `test.py`, `export_onnx.py`, `ui/` |
+| architecture/* | код `pathsolver/`, `train.py`, `test.py`, `export_onnx.py`, `ui/` |
 | research/* | `docs/references/2502.13266v1.pdf` (основная статья); для LRX — `2502.18663v1.pdf` |
 | лендинг | шапка README + `assets/fig.png` |
 

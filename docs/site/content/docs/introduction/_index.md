@@ -50,7 +50,7 @@ training data, which just needs to exceed the graph's diameter.
 
 | Path | What it is |
 |---|---|
-| `pilgrim/` | The library: model, trainer, searcher, DQN refinement, tensor utilities |
+| `pathsolver/` | The library: model, trainer, searcher, DQN refinement, tensor utilities |
 | `train.py`, `test.py` | CLI entry points for training and beam-search evaluation |
 | `generators/`, `targets/`, `datasets/` | Puzzle definitions, solved states, scrambles |
 | `weights/` | Pretrained checkpoints (3×3×3, 4×4×4, 5×5×5) |

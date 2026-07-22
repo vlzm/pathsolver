@@ -8,7 +8,7 @@ import torch.nn as nn
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pilgrim import Searcher, bellman_targets, generate_inverse_moves, get_neighbors
+from pathsolver import Searcher, bellman_targets, generate_inverse_moves, get_neighbors
 
 DEVICE = torch.device("cpu")
 
@@ -159,12 +159,12 @@ def test_searcher_solves_short_scrambles(n_scramble_moves):
 # --- trainer / dqn loop -----------------------------------------------------
 
 def test_run_dqn_trains_and_saves_weights(tmp_path, monkeypatch):
-    from pilgrim import Pilgrim, Trainer
+    from pathsolver import PathSolver, Trainer
 
     all_moves, move_names, V0 = load_group()
     monkeypatch.chdir(tmp_path)
 
-    model = Pilgrim(state_size=V0.numel(), hd1=32, hd2=16, nrd=0, num_classes=V0.numel())
+    model = PathSolver(state_size=V0.numel(), hd1=32, hd2=16, nrd=0, num_classes=V0.numel())
     trainer = Trainer(
         net=model, num_epochs=1, device=DEVICE, batch_size=256, name="test", K_min=1, K_max=5,
         all_moves=all_moves,
@@ -181,12 +181,12 @@ def test_run_dqn_trains_and_saves_weights(tmp_path, monkeypatch):
 
 
 def test_run_dqn_is_a_noop_for_zero_epochs(tmp_path, monkeypatch):
-    from pilgrim import Pilgrim, Trainer
+    from pathsolver import PathSolver, Trainer
 
     all_moves, move_names, V0 = load_group()
     monkeypatch.chdir(tmp_path)
 
-    model = Pilgrim(state_size=V0.numel(), hd1=32, hd2=16, nrd=0, num_classes=V0.numel())
+    model = PathSolver(state_size=V0.numel(), hd1=32, hd2=16, nrd=0, num_classes=V0.numel())
     trainer = Trainer(
         net=model, num_epochs=1, device=DEVICE, batch_size=256, name="test", K_min=1, K_max=5,
         all_moves=all_moves,

@@ -17,7 +17,7 @@ linear memory cost. Published results use up to \( 2^{20} \).
 
 **Bellman update** — refining a value estimate with
 \( V(g) \leftarrow 1 + \min_{s} V(gs) \), used in the optional Modified DQN phase
-(`pilgrim/dqn.py`, `--epochs_dqn`). Introduced in the *CayleyPy RL* paper
+(`pathsolver/dqn.py`, `--epochs_dqn`). Introduced in the *CayleyPy RL* paper
 ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)).
 
 **CayleyPy** — the research project behind Pathsolver. Two papers so far:

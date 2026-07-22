@@ -37,11 +37,11 @@ example twice and nothing is written to disk.
 
 `train.py` assembles the pieces, then hands off to `Trainer.run`:
 
-- builds `Pilgrim(state_size, hd1, hd2, nrd, dropout_rate)`,
+- builds `PathSolver(state_size, hd1, hd2, nrd, dropout_rate)`,
 - optionally warm-starts from `--weights <name>` in `weights/`,
 - runs `--epochs` epochs of MSE regression on random-walk labels,
 - optionally runs `--epochs_dqn` epochs of Bellman refinement
-  ([`pilgrim/dqn.py`]({{< relref "/docs/architecture/pilgrim" >}})),
+  ([`pathsolver/dqn.py`]({{< relref "/docs/architecture/pathsolver" >}})),
 - writes checkpoints to `weights/` and a training log to `logs/`.
 
 The model identity is `model_id = int(time.time())`, assigned in `Trainer.__init__`

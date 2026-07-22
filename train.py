@@ -2,8 +2,8 @@ import argparse
 import os
 import json
 import torch
-from pilgrim import Trainer, Pilgrim
-from pilgrim import count_parameters, generate_inverse_moves, load_cube_data  # assuming these exist in your module
+from pathsolver import Trainer, PathSolver
+from pathsolver import count_parameters, generate_inverse_moves, load_cube_data  # assuming these exist in your module
 
 def save_model_id(model_id):
     """Append model_id to logs/model_id.txt (create file/directories if missing)."""
@@ -15,7 +15,7 @@ def save_model_id(model_id):
 
 def main():
     # Argument parser
-    parser = argparse.ArgumentParser(description="Train Pilgrim Model")
+    parser = argparse.ArgumentParser(description="Train PathSolver Model")
 
     # Training and architecture hyperparameters
     parser.add_argument("--epochs", type=int, default=256, help="Number of training epochs")
@@ -88,7 +88,7 @@ def main():
         raise ValueError("Invalid combination of hd1, hd2, and nrd.")
 
     # Model
-    model = Pilgrim(
+    model = PathSolver(
         num_classes=num_classes,
         state_size=state_size,
         hd1=args.hd1,

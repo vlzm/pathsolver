@@ -16,7 +16,7 @@ only interface between stages.
 flowchart LR
   G[generators/pXXX.json<br/>permutations] --> T
   V[targets/*.pt<br/>solved state V0] --> T
-  T[train.py<br/>random walks → Pilgrim] --> W[weights/*.pt]
+  T[train.py<br/>random walks → PathSolver] --> W[weights/*.pt]
   W --> S[test.py<br/>batched beam search]
   D[datasets/*.pt<br/>scrambles] --> S
   G --> S
@@ -30,7 +30,7 @@ Each stage is documented separately:
 
 - **[Pipeline]({{< relref "/docs/architecture/pipeline" >}})** — the flow above, stage
   by stage, with the files each one reads and writes.
-- **[The pilgrim package]({{< relref "/docs/architecture/pilgrim" >}})** — the ~1000
+- **[The pathsolver package]({{< relref "/docs/architecture/pathsolver" >}})** — the ~1000
   lines that do the actual work: `model.py`, `trainer.py`, `searcher.py`, `dqn.py`,
   `utils.py`.
 - **[Data contract]({{< relref "/docs/architecture/data-contract" >}})** — the naming

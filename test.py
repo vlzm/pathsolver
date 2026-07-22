@@ -3,8 +3,8 @@ import json
 import os
 import time
 import torch
-from pilgrim import Pilgrim, Searcher
-from pilgrim import generate_inverse_moves  # kept if you need inverse moves
+from pathsolver import PathSolver, Searcher
+from pathsolver import generate_inverse_moves  # kept if you need inverse moves
 
 def parse_skip_list(s):
     """Parse skip list provided as JSON (e.g., '[2,5]') or as comma-separated string '2,5'."""
@@ -20,7 +20,7 @@ def parse_skip_list(s):
         return None
 
 def main():
-    parser = argparse.ArgumentParser(description="Test Pilgrim Model")
+    parser = argparse.ArgumentParser(description="Test PathSolver Model")
     parser.add_argument("--group_id", type=int, required=True, help="Group ID.")
     parser.add_argument("--target_id", type=int, default=0, help="Target ID.")
     parser.add_argument("--dataset", type=str, default="rnd", help="Dataset type: 'santa' or 'rnd'.")
@@ -86,8 +86,8 @@ def main():
     # Inverse moves
     inverse_moves = torch.tensor(generate_inverse_moves(move_names), dtype=torch.int64, device=device)
 
-    # Build model (fixed ReLU + BatchNorm inside Pilgrim; no activation/use_batch_norm args)
-    model = Pilgrim(
+    # Build model (fixed ReLU + BatchNorm inside PathSolver; no activation/use_batch_norm args)
+    model = PathSolver(
         num_classes=num_classes,
         state_size=state_size,
         hd1=info["hd1"],
@@ -105,7 +105,7 @@ def main():
     # Mixed precision: use float16 only on CUDA
     if device.type == "cuda":
         model.half()
-        model.dtype = torch.float16  # used by Pilgrim for one-hot cast
+        model.dtype = torch.float16  # used by PathSolver for one-hot cast
     else:
         model.dtype = torch.float32
 

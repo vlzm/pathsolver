@@ -14,7 +14,7 @@ These docs cover Pathsolver end to end — from the problem it solves to every C
 - **[Research]({{< relref "/docs/research" >}})** — the problem formulation, the method
   (diffusion-distance regression + batched beam search) and the published results.
 - **[Architecture]({{< relref "/docs/architecture" >}})** — how the repository is
-  organised: the pipeline, the `pilgrim` package, and the data contract between
+  organised: the pipeline, the `pathsolver` package, and the data contract between
   `generators/`, `targets/` and `datasets/`.
 - **[Usage]({{< relref "/docs/usage" >}})** — running tests with pretrained weights,
   training your own model, multi-agent evaluation, adding puzzles, ONNX export and the

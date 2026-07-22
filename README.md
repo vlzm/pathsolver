@@ -1,8 +1,11 @@
 # Zero-Knowledge ML for Finding Short Paths on Large Cayley Graphs
 
+[![Documentation](https://img.shields.io/badge/docs-pathsolver-2ea44f.svg)](https://vlzm.github.io/pathsolver/)
 [![NeurIPS 2025 Spotlight](https://img.shields.io/badge/NeurIPS%202025-Spotlight-0b5fff.svg)](#)
 [![arXiv:2502.13266](https://img.shields.io/badge/arXiv-2502.13266-b31b1b.svg)](https://www.arxiv.org/pdf/2502.13266)
 [![arXiv:2502.18663](https://img.shields.io/badge/arXiv-2502.18663-b31b1b.svg)](https://arxiv.org/abs/2502.18663)
+
+📖 **Full documentation:** <https://vlzm.github.io/pathsolver/> — pipeline overview, architecture of the `pathsolver` package, usage guides, and the research write-up.
 
 **Lightweight, end-to-end PyTorch pipeline** — data generation → training → search — all in `torch`, optimized for massive GPU parallelism. This repository is the official implementation of the NeurIPS 2025 Spotlight paper *A Machine Learning Approach That Beats Large Rubik's Cubes* ([arXiv:2502.13266](https://arxiv.org/abs/2502.13266)): a novel ML approach for finding short paths on large **Cayley graphs** (e.g. across permutation puzzles such as the Rubik’s Cube) by training neural networks to estimate diffusion distances and using those predictions to guide an efficient beam search. This approach is **zero human knowledge** (no handcrafted heuristics or domain rules).
 

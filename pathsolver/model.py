@@ -25,9 +25,9 @@ class ResidualBlock(nn.Module):
         return out
 
 
-class Pilgrim(nn.Module):
+class PathSolver(nn.Module):
     def __init__(self, state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.0, num_classes=6):
-        super(Pilgrim, self).__init__()
+        super(PathSolver, self).__init__()
         self.dtype = torch.float32
         self.state_size = state_size
         self.num_classes = num_classes

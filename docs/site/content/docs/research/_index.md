@@ -16,7 +16,7 @@ series:
   Pathfinding and Reinforcement Learning on Cayley Graphs"*. Combines the
   diffusion-distance approach with reinforcement learning: the
   [Modified DQN refinement]({{< relref "/docs/research/method#bellman-refinement-modified-dqn" >}})
-  implemented in `pilgrim/dqn.py`, and the study of the LRX Cayley graph
+  implemented in `pathsolver/dqn.py`, and the study of the LRX Cayley graph
   (cyclic shift + transposition), including support for the OEIS-A186783 conjecture
   that its diameter is n(n−1)/2.
 

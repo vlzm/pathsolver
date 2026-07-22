@@ -3,7 +3,7 @@ import os
 import time
 import pandas as pd
 import math
-from .model import Pilgrim
+from .model import PathSolver
 from .dqn import bellman_targets
 
 class Trainer:

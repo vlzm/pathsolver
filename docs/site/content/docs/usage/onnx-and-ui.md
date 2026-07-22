@@ -15,7 +15,7 @@ python export_onnx.py --group_id 54 --model_id 333 --epoch 8192
 ```
 
 `--group_id`, `--model_id` and `--epoch` are all required. `export_onnx.py` loads the
-matching checkpoint from `weights/`, rebuilds the `Pilgrim` network and writes an ONNX
+matching checkpoint from `weights/`, rebuilds the `PathSolver` network and writes an ONNX
 graph into `onnx/`. The exported graph's contract is `int64 [B, state_size] →
 float [B]`: raw state vectors in — the one-hot encoding is part of the graph — and one
 scalar score per state out, with a dynamic batch axis so the browser can size batches

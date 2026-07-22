@@ -4,11 +4,11 @@ import os
 
 import torch
 
-from pilgrim import Pilgrim
+from pathsolver import PathSolver
 
 
 def build_model(group_id, target_id, model_id, epoch, device="cpu"):
-    """Rebuild a trained Pilgrim from its training log and weights, as test.py does."""
+    """Rebuild a trained PathSolver from its training log and weights, as test.py does."""
     name = f"p{int(group_id):03d}-t{int(target_id):03d}"
 
     with open(f"logs/model_{name}_{model_id}.json") as f:
@@ -16,7 +16,7 @@ def build_model(group_id, target_id, model_id, epoch, device="cpu"):
 
     V0 = torch.load(f"targets/{name}.pt", weights_only=True, map_location=device)
 
-    model = Pilgrim(
+    model = PathSolver(
         num_classes=torch.unique(V0).numel(),
         state_size=V0.numel(),
         hd1=info["hd1"],
@@ -60,7 +60,7 @@ def check_parity(onnx_path, model, V0, num_states=64):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Export a trained Pilgrim model to ONNX")
+    parser = argparse.ArgumentParser(description="Export a trained PathSolver model to ONNX")
     parser.add_argument("--group_id", type=int, required=True, help="Group ID")
     parser.add_argument("--target_id", type=int, default=0, help="Target ID")
     parser.add_argument("--model_id", type=str, required=True, help="Model ID from logs/model_id.txt")

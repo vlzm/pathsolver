@@ -44,14 +44,14 @@ absolute terms.
 The network itself is deliberately plain: one-hot encode the state
 (`state_size × num_classes`), a linear layer to `hd1`, an optional layer to `hd2`,
 `nrd` residual blocks with BatchNorm+ReLU, and a scalar output. See
-[the Pilgrim package]({{< relref "/docs/architecture/pilgrim" >}}).
+[the PathSolver package]({{< relref "/docs/architecture/pathsolver" >}}).
 
 ### Bellman refinement (Modified DQN)
 
 This phase comes from the follow-up paper *CayleyPy RL*
 ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)), which combines the
 diffusion-distance approach with reinforcement learning. Optionally the random-walk
-labels are sharpened by a Bellman update on the Cayley graph (`pilgrim/dqn.py`):
+labels are sharpened by a Bellman update on the Cayley graph (`pathsolver/dqn.py`):
 
 ```katex
 V(g) \;\leftarrow\; \min\Big( 1 + \min_{s \in S} V_\theta(g s),\; K_{\mathrm{rw}}(g) \Big),
@@ -72,7 +72,7 @@ build on.
 
 ## Batched GPU beam search
 
-At search time (`pilgrim/searcher.py`) the model replaces the heuristic in a beam
+At search time (`pathsolver/searcher.py`) the model replaces the heuristic in a beam
 search of width \( B \):
 
 1. **Expand.** For the current beam of \( B \) states, generate all \( B \cdot |S| \)

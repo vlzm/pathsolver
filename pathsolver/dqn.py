@@ -11,7 +11,7 @@ def bellman_targets(net, X, y_rw, all_moves, V0, batch_size=2**14, flag_round=Fa
     Bellman estimate is clipped against them; distances are at least 1 everywhere
     except the solved state itself.
 
-    :param net: Pilgrim model (scalar regressor)
+    :param net: PathSolver model (scalar regressor)
     :param X: Tensor [N, state_size] of states
     :param y_rw: Tensor [N] of random walk lengths (upper bound on distance)
     :param all_moves: Tensor [n_gens, state_size] of permutations

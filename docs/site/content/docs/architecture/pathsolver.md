@@ -1,17 +1,17 @@
 ---
-title: "The pilgrim package"
+title: "The pathsolver package"
 weight: 2
 math: true
 ---
 
-# The `pilgrim` package
+# The `pathsolver` package
 
 About a thousand lines total. Five modules, no inheritance hierarchies, no config
 framework — each file does one thing.
 
 | Module | Lines | Responsibility |
 |---|---:|---|
-| `model.py` | 116 | The `Pilgrim` network and batched inference helpers |
+| `model.py` | 116 | The `PathSolver` network and batched inference helpers |
 | `trainer.py` | 184 | Random-walk generation, training loop, checkpointing |
 | `searcher.py` | 143 | Batched GPU beam search |
 | `dqn.py` | 44 | Bellman (Modified DQN) target refinement |
@@ -19,7 +19,7 @@ framework — each file does one thing.
 
 ## `model.py` — the network
 
-`Pilgrim(state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.0, num_classes=6)`
+`PathSolver(state_size, hd1=5000, hd2=1000, nrd=2, output_dim=1, dropout_rate=0.0, num_classes=6)`
 is a plain MLP with residual blocks:
 
 ```text
