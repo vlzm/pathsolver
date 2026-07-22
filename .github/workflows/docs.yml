@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/site/**'
+      - 'ui/web/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -46,6 +47,12 @@ jobs:
         working-directory: docs/site
         # baseURL comes from hugo.toml; --gc --minify match the local build.
         run: hugo --gc --minify
+
+      - name: Bundle browser UI
+        # Copy the static browser UI alongside the Hugo output so it is served
+        # at <site>/ui/ (e.g. .../pathsolver/ui/cube/). Plain HTML/CSS/JS with
+        # no build step; relative paths keep working under the subpath.
+        run: cp -r ui/web docs/site/public/ui
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
