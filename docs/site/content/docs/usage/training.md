@@ -63,6 +63,12 @@ implements the Modified DQN of the *CayleyPy RL* paper
 `--dqn_round` is reported in that paper as giving no improvement; it is there for
 reproduction.
 
+Run this phase **on top of** a diffusion-distance warm-up, not instead of one. The
+paper finds that DQN epochs reliably improve the warm-up model — shorter solutions and
+a higher solve rate — but by a modest margin, whereas DQN from scratch (a large
+`--epochs_dqn` with no warm-up epochs) performs poorly. In practice a short DQN phase
+after the main run is a refinement, not a substitute for it.
+
 ## Finding your model afterwards
 
 Training assigns `model_id = int(time.time())` at start and prints it. Checkpoints

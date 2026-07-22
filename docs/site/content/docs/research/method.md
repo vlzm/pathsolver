@@ -21,7 +21,13 @@ from \( V_0 \), and the resulting state is labelled with \( K \):
 ```
 
 The only structural prior applied is that a walk never immediately undoes its previous
-move (`Trainer.do_random_step` masks the inverse of the last move).
+move (`Trainer.do_random_step` masks the inverse of the last move) — a
+**non-backtracking** random walk. This is not a minor detail: because a
+non-backtracking walk drifts away from the solved state more directly, its length is a
+tighter, less noisy estimate of the true distance than a plain random walk. The
+*CayleyPy RL* paper reports (its Table 6) that on the harder LRX graphs a single-epoch
+model trained on plain random walks often fails to solve at all, while the same model
+trained on non-backtracking walks succeeds.
 
 The label \( K \) is not the true distance — a walk can revisit states, so \( K \) is
 an **upper bound**, \( d(g, e) \le K \). What the network learns by regressing on
@@ -55,6 +61,14 @@ V(g) \;\leftarrow\; \min\Big( 1 + \min_{s \in S} V_\theta(g s),\; K_{\mathrm{rw}
 The estimate is clipped against the random-walk label because that label is a valid
 upper bound, and clamped below by 1 everywhere except the solved state. This is
 enabled with `--epochs_dqn` (see [Training]({{< relref "/docs/usage/training" >}})).
+
+The refinement is best understood as a *sharpening* of the diffusion-distance warm-up,
+not a replacement for it. The paper reports that DQN epochs consistently improve on the
+warm-up — both solution length and solve rate — but that the gain is modest, and that
+**DQN training from scratch, without the diffusion warm-up, performs poorly**. The
+warm-up gives the network a globally sensible value landscape that the Bellman update
+then refines locally; starting from a random landscape, the local update has little to
+build on.
 
 ## Batched GPU beam search
 
