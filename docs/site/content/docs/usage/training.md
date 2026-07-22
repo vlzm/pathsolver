@@ -50,7 +50,9 @@ values used per puzzle are tabulated in
 ## Bellman (Modified DQN) refinement
 
 After the random-walk phase you can refine the value estimates with a Bellman update
-on the Cayley graph ([method]({{< relref "/docs/research/method" >}})):
+on the Cayley graph ([method]({{< relref "/docs/research/method" >}})). The phase
+implements the Modified DQN of the *CayleyPy RL* paper
+([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)):
 
 | Flag | Default | Meaning |
 |---|---:|---|
@@ -58,7 +60,7 @@ on the Cayley graph ([method]({{< relref "/docs/research/method" >}})):
 | `--dqn_walkers` | 0 | Walkers per DQN epoch; `0` means 1/10 of the warm-up walkers |
 | `--dqn_round` | off | Round DQN targets to integers |
 
-`--dqn_round` is reported in the paper as giving no improvement; it is there for
+`--dqn_round` is reported in that paper as giving no improvement; it is there for
 reproduction.
 
 ## Finding your model afterwards

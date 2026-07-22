@@ -2,8 +2,11 @@
 
 [![NeurIPS 2025 Spotlight](https://img.shields.io/badge/NeurIPS%202025-Spotlight-0b5fff.svg)](#)
 [![arXiv:2502.13266](https://img.shields.io/badge/arXiv-2502.13266-b31b1b.svg)](https://www.arxiv.org/pdf/2502.13266)
+[![arXiv:2502.18663](https://img.shields.io/badge/arXiv-2502.18663-b31b1b.svg)](https://arxiv.org/abs/2502.18663)
 
 **Lightweight, end-to-end PyTorch pipeline** — data generation → training → search — all in `torch`, optimized for massive GPU parallelism. This repository implements a novel ML approach for finding short paths on large **Cayley graphs** (e.g. across permutation puzzles such as the Rubik’s Cube) by training neural networks to estimate diffusion distances and using those predictions to guide an efficient beam search. This approach is **zero human knowledge** (no handcrafted heuristics or domain rules).
+
+The repository also implements the follow-up paper in the CayleyPy series, *CayleyPy RL: Pathfinding and Reinforcement Learning on Cayley Graphs* ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)): the optional **Modified DQN** refinement of the value estimates (see [Training](#training-your-model)) and the **LRX** puzzle family (cyclic shift + transposition generators, groups `034`+) studied there.
 
 <p align="center">
   <img src="assets/fig.png" alt="Architecture: diffusion-distance predictor + batched beam search" width="720">
@@ -89,6 +92,18 @@ python test.py --group_id 28 --target_id 0 --tests_num 3 --dataset rnd --num_ste
 ```
 
 Replace `{MODEL_ID}` with the actual numeric identifier saved in the logs.
+
+### Modified DQN refinement
+
+After the random-walk phase you can optionally refine the value estimates with a Bellman update on the Cayley graph, following the *CayleyPy RL* paper ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)):
+
+```bash
+python train.py --group_id 34 --target_id 0 --epochs 30 --epochs_dqn 200 --K_max 50 --device_id 0
+```
+
+* `--epochs_dqn` — number of Modified DQN epochs (`0` disables the phase).
+* `--dqn_walkers` — walkers per DQN epoch (`0` means 1/10 of the warm-up walkers).
+* `--dqn_round` — round DQN targets to integers (reported in the paper as giving no improvement; kept for reproduction).
 
 ## Adding New Puzzle Groups
 
@@ -180,6 +195,8 @@ All logs are saved in `logs/`, with results printed at the end.
 | 053      | Pancake 55                    | 75        |
 | 054      | Cube 3x3x3 (DeepCubeA metric) | 26        |
 
+The `LRX` groups are the Cayley graph of the symmetric group with generators L/R (cyclic shift left/right) and X (transposition of the first two positions), studied in the *CayleyPy RL* paper ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)); generators and targets for larger sizes up to LRX 55 (groups `038`–`043`) ship in the repository as well.
+
 For reproducing results from Table 4, refer to provided `traintest-tab4-santa.sh` and `traintest-tab4-rnd.sh`, paper/solver-scrambles and paper/figure-scrambles contain generators and scrambles used in each specific experiment. The classical 15-puzzle (no wrap-around) is not a Cayley graph: node degrees vary with the blank position, hence the state graph is not vertex-transitive. We include it as a non-Cayley baseline at separate branch [puzzle-15](https://github.com/khoruzhii/cayleypy-cube/tree/puzzle-15).
 
 ## Browser UI
@@ -187,7 +204,9 @@ For reproducing results from Table 4, refer to provided `traintest-tab4-santa.sh
 The `ui/` folder contains a browser demo that runs a trained model entirely
 client-side: `ui/web/cube/` is an interactive 3x3x3 solver where the beam search
 runs in a Web Worker on top of `onnxruntime-web`, using the exported network in
-`model2.onnx` and the move permutations in `moves.json`. Alongside it `ui/web/`
+`model2.onnx` and the move permutations in `moves.json`. `ui/web/lrx/` is the same
+setup for the LRX permutation puzzle from arXiv:2502.18663, with ONNX models for
+n = 10 and n = 15. Alongside them `ui/web/`
 holds several other standalone puzzle pages (sudoku, masyu, bmf, ...).
 
 **Live demo:** the UI is published to GitHub Pages automatically, so you can try
@@ -249,5 +268,20 @@ If you use this work in research, please cite one of the following BibTeX entrie
   eprint        = {2502.13266},
   archivePrefix = {arXiv},
   url           = {https://arxiv.org/abs/2502.13266}
+}
+```
+
+If you use the Modified DQN refinement or the LRX puzzles, please also cite the follow-up paper:
+
+```bibtex
+% CayleyPy RL: Modified DQN refinement and the LRX study
+@misc{Chervov2026CayleyPyRL,
+  author        = {A. Chervov and M. Obozov and A. Soibelman and S. Lytkin and I. Kiselev and S. Fironov and A. Lukyanenko and A. Dolgorukova and A. Ogurtsov and F. Petrov and S. Krymskii and M. Evseev and L. Grunvald and D. Gorodkov and G. Antiufeev and G. Verbii and V. Zamkovoy and L. Cheldieva and I. Koltsov and A. Sychev and A. Eliseev and S. Nikolenko and N. Narynbaev and R. Turtayev and N. Rokotyan and S. Kovalev and A. Rozanov and V. Nelin and S. Ermilov and L. Shishina and D. Mamayeva and A. Korolkova and K. Khoruzhii and A. Romanov},
+  title         = {CayleyPy RL: Pathfinding and Reinforcement Learning on Cayley Graphs},
+  year          = {2026},
+  eprint        = {2502.18663},
+  archivePrefix = {arXiv},
+  doi           = {10.4310/ATMP.260413005111},
+  url           = {https://arxiv.org/abs/2502.18663}
 }
 ```

@@ -54,7 +54,12 @@ install required.
 - the move permutations come from `moves.json` — byte-identical to
   `generators/p054.json`.
 
-Alongside it, `ui/web/` holds several other standalone puzzle pages (sudoku, masyu,
+`ui/web/lrx/` is the same setup for the LRX permutation puzzle from the *CayleyPy RL*
+paper ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)): it ships ONNX models for
+n = 10 and n = 15 (groups `034`/`035`) and reuses the shared beam search in
+`ui/web/solver/solver-core.js`.
+
+Alongside them, `ui/web/` holds several other standalone puzzle pages (sudoku, masyu,
 bmf, …).
 
 ## Running locally

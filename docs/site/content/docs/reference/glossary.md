@@ -17,7 +17,13 @@ linear memory cost. Published results use up to \( 2^{20} \).
 
 **Bellman update** — refining a value estimate with
 \( V(g) \leftarrow 1 + \min_{s} V(gs) \), used in the optional Modified DQN phase
-(`pilgrim/dqn.py`, `--epochs_dqn`).
+(`pilgrim/dqn.py`, `--epochs_dqn`). Introduced in the *CayleyPy RL* paper
+([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)).
+
+**CayleyPy** — the research project behind Pathsolver. Two papers so far:
+[arXiv:2502.13266](https://www.arxiv.org/pdf/2502.13266) (the core method, NeurIPS
+2025 Spotlight) and [arXiv:2502.18663](https://arxiv.org/abs/2502.18663) (*CayleyPy
+RL*: Modified DQN refinement and the LRX study).
 
 **Cayley graph** — graph on the elements of a group \( G \) with edges \( g \to gs \)
 for generators \( s \in S \). Vertex-transitive, defined implicitly by \( |S| \)
@@ -49,6 +55,12 @@ it is the one genuinely per-puzzle hyperparameter.
 
 **Klotski** — sliding block puzzle; the 6×6 variant with periodic boundary conditions
 (PBC) is one of the four headline benchmarks.
+
+**LRX** — the Cayley graph of the symmetric group with generators L/R (cyclic shift
+left/right) and X (transposition of the first two positions); groups `034`–`043`.
+Studied in [arXiv:2502.18663](https://arxiv.org/abs/2502.18663), where machine
+learning and mathematical methods support the OEIS-A186783 conjecture that its
+diameter is \( n(n-1)/2 \).
 
 **`model_id`** — a run's identity, set to `int(time.time())` when training starts.
 Needed to load a checkpoint back.

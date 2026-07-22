@@ -18,6 +18,13 @@ The approach uses **zero human knowledge**: no handcrafted heuristics, no domain
 rules, no pattern databases. The same architecture and the same hyperparameters
 transfer across puzzles unchanged.
 
+The repository also implements the follow-up paper in the CayleyPy series,
+*"CayleyPy RL: Pathfinding and Reinforcement Learning on Cayley Graphs"*
+([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)): the optional
+[Modified DQN refinement]({{< relref "/docs/research/method#bellman-refinement-modified-dqn" >}})
+of the value estimates and the [LRX puzzle family]({{< relref "/docs/reference/groups" >}})
+(cyclic shift + transposition generators) studied there.
+
 <p align="center">
   <img src="images/fig.png" alt="Diffusion-distance predictor + batched beam search" style="max-width:100%;">
 </p>
@@ -41,6 +48,7 @@ the art at comparable solution lengths. See [Results]({{< relref "/docs/research
 ## Quick links
 
 - 📄 **Paper** — [arXiv:2502.13266](https://www.arxiv.org/pdf/2502.13266) (NeurIPS 2025 Spotlight)
+- 📄 **Follow-up paper** — [arXiv:2502.18663](https://arxiv.org/abs/2502.18663) (CayleyPy RL: Modified DQN + LRX)
 - 💻 **Code** — [github.com/vlzm/pathsolver](https://github.com/vlzm/pathsolver)
 - 🧩 **Browser demo** — client-side 3×3×3 solver in [`ui/web/cube/`]({{< relref "/docs/usage/onnx-and-ui" >}})
 

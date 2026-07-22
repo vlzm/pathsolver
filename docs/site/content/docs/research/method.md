@@ -42,8 +42,10 @@ The network itself is deliberately plain: one-hot encode the state
 
 ### Bellman refinement (Modified DQN)
 
-Optionally the random-walk labels are sharpened by a Bellman update on the Cayley
-graph (`pilgrim/dqn.py`):
+This phase comes from the follow-up paper *CayleyPy RL*
+([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)), which combines the
+diffusion-distance approach with reinforcement learning. Optionally the random-walk
+labels are sharpened by a Bellman update on the Cayley graph (`pilgrim/dqn.py`):
 
 ```katex
 V(g) \;\leftarrow\; \min\Big( 1 + \min_{s \in S} V_\theta(g s),\; K_{\mathrm{rw}}(g) \Big),

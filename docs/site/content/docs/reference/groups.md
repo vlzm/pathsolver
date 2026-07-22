@@ -80,6 +80,13 @@ some groups (see the note below).
   `003` 70 (not 65), `004` 100 for `t000` and 150 for `t001`, `017` 45 for `t000` and
   60 for `t001`, `020` 30 for `t000` and 40 for `t001`. See the `triples` job lists in
   `traintest-tab4-santa.sh` and `traintest-tab4-rnd.sh`.
+- **The LRX groups (`034`–`043`).** LRX is the Cayley graph of the symmetric group
+  with generators L (cyclic shift left), R (cyclic shift right) and X (transposition
+  of the first two positions), studied in the *CayleyPy RL* paper
+  ([arXiv:2502.18663](https://arxiv.org/abs/2502.18663)) — including support for the
+  OEIS-A186783 conjecture that its diameter is n(n−1)/2. These groups pair naturally
+  with the [Modified DQN phase]({{< relref "/docs/usage/training#bellman-modified-dqn-refinement" >}})
+  from the same paper.
 - **`generators/p016.json` has no target.** It exists (4 wreath-style generators, state
   size 198) but there is no `targets/p016-t000.pt`, so the group cannot be trained or
   tested as shipped — hence its absence from the table.
