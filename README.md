@@ -190,9 +190,12 @@ runs in a Web Worker on top of `onnxruntime-web`, using the exported network in
 `model2.onnx` and the move permutations in `moves.json`. Alongside it `ui/web/`
 holds several other standalone puzzle pages (sudoku, masyu, bmf, ...).
 
-There is **no build step** — the pages are plain HTML/CSS/JS and are deployed by
-copying `ui/web/` to a web server (see `ui/deploy/`). To run them locally you
-only need a static file server:
+**Live demo:** the UI is published to GitHub Pages automatically, so you can try
+it without installing anything — the 3×3×3 solver runs at
+<https://vlzm.github.io/pathsolver/ui/cube/>.
+
+There is **no build step** — the pages are plain HTML/CSS/JS. To run them locally
+you only need a static file server:
 
 ```bash
 cd ui/web
@@ -212,7 +215,14 @@ Then open <http://127.0.0.1:8765/cube/>.
 * `ui/back/sudoku-back/` is an optional Node backend, needed only for Sudoku
   multiplayer. Run it with `npm install && node server.js`, and set
   `ALLOWED_ORIGINS` to the origin serving the pages (defaults to
-  `http://localhost:8080`).
+  `http://localhost:8080`). This backend is **not** part of the GitHub Pages
+  deployment, so multiplayer is unavailable there (the single-player solver
+  still works).
+* **Deployment is automatic.** The docs workflow
+  (`.github/workflows/docs.yml`) copies `ui/web/` into the published site on
+  every push to `main`, serving it under `…/pathsolver/ui/`. To host it
+  elsewhere, just copy `ui/web/` to any static web server (see `ui/deploy/` for
+  an nginx example) — inference is client-side, so no GPU or backend is needed.
 
 ## Citation
 

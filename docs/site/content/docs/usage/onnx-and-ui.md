@@ -39,6 +39,10 @@ is skipped with a message.
 
 ## The browser demo
 
+**Try it live:** the demo is published to GitHub Pages, so the 3×3×3 solver runs at
+[vlzm.github.io/pathsolver/ui/cube/](https://vlzm.github.io/pathsolver/ui/cube/) — no
+install required.
+
 `ui/web/cube/` is an interactive 3×3×3 solver that runs entirely in the browser:
 
 - the cube widget is `cubing.js`'s `twisty-player`,
@@ -79,6 +83,16 @@ Then open <http://127.0.0.1:8765/cube/>.
 
 ## Deploying
 
-Copy `ui/web/` to any web server — `ui/deploy/` holds the nginx config and a README
-covering the public demo's setup. Since inference is client-side, no GPU or backend is involved in serving
-the solver.
+Deployment to GitHub Pages is **automatic**. The docs workflow
+(`.github/workflows/docs.yml`) copies `ui/web/` into the published Hugo site on every
+push to `main`, so the pages are served under `…/pathsolver/ui/` alongside these docs —
+e.g. the cube solver at
+[`…/pathsolver/ui/cube/`](https://vlzm.github.io/pathsolver/ui/cube/). Because inference
+is client-side, no GPU or backend is involved in serving the solver.
+
+To host it anywhere else, copy `ui/web/` to any static web server — `ui/deploy/` holds
+an nginx config and a README covering the public demo's original setup.
+
+One exception: Sudoku multiplayer needs the optional `ui/back/sudoku-back/` Node
+backend, which Pages cannot run, so multiplayer is unavailable on the hosted site (the
+single-player solver still works).
